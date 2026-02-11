@@ -69,13 +69,10 @@ $(document).ready(function () {
             }
             table.draw(false);
 
-            // If the table was empty and now has data, remove empty state
+            // Show table and hide empty state when data arrives
             if (data.stocks.length > 0) {
-                $('.empty-state').remove();
-                if ($('#stocks-table').closest('.dataTables_wrapper').length === 0) {
-                    // Table needs to be re-initialized — reload page once
-                    location.reload();
-                }
+                $('#empty-state').hide();
+                $('#stocks-table').closest('.dataTables_wrapper').show();
             }
         });
     }

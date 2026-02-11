@@ -26,8 +26,14 @@
     </div>
 </div>
 
-{% if stocks %}
-<table id="stocks-table" class="display">
+{% if not stocks %}
+<div id="empty-state" class="empty-state">
+    <h2>No data available</h2>
+    <p>Click "Refresh Data" to start fetching analyst recommendations for all S&P 500 stocks.</p>
+</div>
+{% endif %}
+
+<table id="stocks-table" class="display" {% if not stocks %}style="display: none;"{% endif %}>
     <thead>
         <tr>
             <th>#</th>
@@ -87,12 +93,6 @@
         {% endfor %}
     </tbody>
 </table>
-{% else %}
-<div class="empty-state">
-    <h2>No data available</h2>
-    <p>Click "Refresh Data" to start fetching analyst recommendations for all S&P 500 stocks.</p>
-</div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}
