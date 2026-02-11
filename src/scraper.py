@@ -16,6 +16,15 @@ from src.db import upsert_stock
 
 logger = logging.getLogger(__name__)
 
+# Module-level refresh progress tracking
+refresh_status = {
+    "in_progress": False,
+    "processed": 0,
+    "total": 0,
+    "success": 0,
+    "failed": 0,
+}
+
 
 def get_sp500_tickers() -> list[dict]:
     """Fetch current S&P 500 constituents from Wikipedia."""
@@ -109,6 +118,12 @@ def refresh_all_stocks():
     success = 0
     failed = 0
 
+    refresh_status["in_progress"] = True
+    refresh_status["processed"] = 0
+    refresh_status["total"] = total
+    refresh_status["success"] = 0
+    refresh_status["failed"] = 0
+
     for i, row in enumerate(tickers):
         symbol = row["Symbol"]
         try:
@@ -125,6 +140,10 @@ def refresh_all_stocks():
             logger.warning(f"Failed to process {symbol}: {e}")
             failed += 1
 
+        refresh_status["processed"] = i + 1
+        refresh_status["success"] = success
+        refresh_status["failed"] = failed
+
         # Rate limiting
         if i < total - 1:
             time.sleep(random.uniform(SCRAPE_DELAY_MIN, SCRAPE_DELAY_MAX))
@@ -133,6 +152,8 @@ def refresh_all_stocks():
         if (i + 1) % BATCH_SIZE == 0:
             logger.info(f"Processed {i + 1}/{total} tickers, pausing...")
             time.sleep(BATCH_PAUSE_SECONDS)
+
+    refresh_status["in_progress"] = False
 
     logger.info(
         f"Refresh complete: {success} succeeded, {failed} failed out of {total} tickers"

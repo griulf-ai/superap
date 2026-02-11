@@ -6,7 +6,7 @@ from flask import Flask, jsonify, render_template
 
 from src.db import get_all_stocks, get_last_update_time, get_stock, get_stock_count, init_db
 from src.scheduler import init_scheduler
-from src.scraper import refresh_all_stocks
+from src.scraper import refresh_all_stocks, refresh_status
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,9 +40,28 @@ def stock_detail(ticker):
 @app.route("/api/refresh", methods=["POST"])
 def manual_refresh():
     """Trigger a manual data refresh in a background thread."""
+    if refresh_status["in_progress"]:
+        return jsonify({"status": "refresh already in progress"})
     thread = threading.Thread(target=refresh_all_stocks, daemon=True)
     thread.start()
     return jsonify({"status": "refresh started"})
+
+
+@app.route("/api/refresh/status")
+def get_refresh_status():
+    """Return the current refresh progress."""
+    return jsonify(refresh_status)
+
+
+@app.route("/api/stocks")
+def api_stocks():
+    """Return all stocks as JSON for live table updates."""
+    stocks = get_all_stocks(sort_by="rec_mean", order="ASC")
+    return jsonify({
+        "stocks": stocks,
+        "stock_count": get_stock_count(),
+        "last_update": get_last_update_time(),
+    })
 
 
 def create_app():

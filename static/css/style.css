@@ -203,6 +203,45 @@ table.dataTable tbody tr.odd td {
     color: var(--text) !important;
 }
 
+/* ===== Refresh progress ===== */
+.progress-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+#progress-text {
+    color: var(--text);
+}
+
+#progress-count {
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-bar-bg {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
 /* ===== Empty state ===== */
 .empty-state {
     text-align: center;
