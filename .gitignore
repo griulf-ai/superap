@@ -10,6 +10,8 @@ build/
 venv/
 env/
 data/*.db
+data/*.db-shm
+data/*.db-wal
 .env
 *.log
 .DS_Store
