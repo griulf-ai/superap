@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}{{ ticker }} - SuperAP{% endblock %}
+
+{% block content %}
+<div class="back-link">
+    <a href="/">&larr; Back to dashboard</a>
+</div>
+
+{% if stock %}
+<div class="stock-detail">
+    <div class="stock-header">
+        <h1>{{ stock.ticker }} &mdash; {{ stock.company_name or 'Unknown' }}</h1>
+        <span class="badge badge-{{ stock.rec_key or 'none' }} badge-lg">
+            {{ (stock.rec_key or 'N/A') | replace('_', ' ') | title }}
+        </span>
+    </div>
+
+    <div class="card-grid">
+        <div class="card">
+            <h3>Price</h3>
+            <p class="card-value">{{ '$%.2f' | format(stock.current_price) if stock.current_price else 'N/A' }}</p>
+        </div>
+        <div class="card">
+            <h3>Target (Mean)</h3>
+            <p class="card-value">{{ '$%.2f' | format(stock.target_mean) if stock.target_mean else 'N/A' }}</p>
+        </div>
+        <div class="card">
+            <h3>Upside</h3>
+            <p class="card-value {% if stock.upside_pct and stock.upside_pct > 0 %}text-green{% elif stock.upside_pct and stock.upside_pct < 0 %}text-red{% endif %}">
+                {{ '%+.1f' | format(stock.upside_pct) + '%' if stock.upside_pct is not none else 'N/A' }}
+            </p>
+        </div>
+        <div class="card">
+            <h3>Analysts</h3>
+            <p class="card-value">{{ stock.num_analysts or 'N/A' }}</p>
+        </div>
+    </div>
+
+    <div class="card-grid">
+        <div class="card">
+            <h3>Sector</h3>
+            <p>{{ stock.sector or 'N/A' }}</p>
+        </div>
+        <div class="card">
+            <h3>Market Cap</h3>
+            <p>
+                {% if stock.market_cap %}
+                    {% if stock.market_cap >= 1e12 %}
+                        ${{ '%.1f' | format(stock.market_cap / 1e12) }}T
+                    {% elif stock.market_cap >= 1e9 %}
+                        ${{ '%.1f' | format(stock.market_cap / 1e9) }}B
+                    {% else %}
+                        ${{ '%.0f' | format(stock.market_cap / 1e6) }}M
+                    {% endif %}
+                {% else %}
+                    N/A
+                {% endif %}
+            </p>
+        </div>
+        <div class="card">
+            <h3>Rec. Score</h3>
+            <p>{{ '%.2f' | format(stock.rec_mean) if stock.rec_mean else 'N/A' }}
+                <span class="hint">(1 = Strong Buy, 5 = Strong Sell)</span>
+            </p>
+        </div>
+    </div>
+
+    <h2>Price Target Range</h2>
+    <div class="target-range">
+        <div class="range-bar">
+            <span class="range-label range-low">${{ '%.0f' | format(stock.target_low) if stock.target_low else '?' }}</span>
+            <div class="range-fill"></div>
+            <span class="range-label range-high">${{ '%.0f' | format(stock.target_high) if stock.target_high else '?' }}</span>
+        </div>
+        <p class="range-detail">
+            Low: ${{ '%.2f' | format(stock.target_low) if stock.target_low else 'N/A' }} &middot;
+            Median: ${{ '%.2f' | format(stock.target_median) if stock.target_median else 'N/A' }} &middot;
+            Mean: ${{ '%.2f' | format(stock.target_mean) if stock.target_mean else 'N/A' }} &middot;
+            High: ${{ '%.2f' | format(stock.target_high) if stock.target_high else 'N/A' }}
+        </p>
+    </div>
+
+    <h2>Analyst Breakdown</h2>
+    <div class="analyst-breakdown">
+        <div class="breakdown-bar">
+            {% set total = (stock.strong_buy or 0) + (stock.buy or 0) + (stock.hold or 0) + (stock.sell or 0) + (stock.strong_sell or 0) %}
+            {% if total > 0 %}
+                <div class="bar-segment bar-strong-buy" style="width: {{ (stock.strong_buy or 0) / total * 100 }}%"
+                     title="Strong Buy: {{ stock.strong_buy or 0 }}"></div>
+                <div class="bar-segment bar-buy" style="width: {{ (stock.buy or 0) / total * 100 }}%"
+                     title="Buy: {{ stock.buy or 0 }}"></div>
+                <div class="bar-segment bar-hold" style="width: {{ (stock.hold or 0) / total * 100 }}%"
+                     title="Hold: {{ stock.hold or 0 }}"></div>
+                <div class="bar-segment bar-sell" style="width: {{ (stock.sell or 0) / total * 100 }}%"
+                     title="Sell: {{ stock.sell or 0 }}"></div>
+                <div class="bar-segment bar-strong-sell" style="width: {{ (stock.strong_sell or 0) / total * 100 }}%"
+                     title="Strong Sell: {{ stock.strong_sell or 0 }}"></div>
+            {% endif %}
+        </div>
+        <div class="breakdown-legend">
+            <span class="legend-item"><span class="dot dot-strong-buy"></span> Strong Buy: {{ stock.strong_buy or 0 }}</span>
+            <span class="legend-item"><span class="dot dot-buy"></span> Buy: {{ stock.buy or 0 }}</span>
+            <span class="legend-item"><span class="dot dot-hold"></span> Hold: {{ stock.hold or 0 }}</span>
+            <span class="legend-item"><span class="dot dot-sell"></span> Sell: {{ stock.sell or 0 }}</span>
+            <span class="legend-item"><span class="dot dot-strong-sell"></span> Strong Sell: {{ stock.strong_sell or 0 }}</span>
+        </div>
+    </div>
+
+    <p class="updated-at">Last updated: {{ stock.updated_at[:19] if stock.updated_at else 'N/A' }} UTC</p>
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>Stock not found</h2>
+    <p>No data available for ticker <strong>{{ ticker }}</strong>.</p>
+</div>
+{% endif %}
+{% endblock %}

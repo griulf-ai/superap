@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div>
+        <h1>Top Analyst Recommendations</h1>
+        <p class="meta">
+            {{ stock_count }} stocks
+            {% if last_update %}
+                &middot; Last updated: {{ last_update[:19] }} UTC
+            {% else %}
+                &middot; No data yet &mdash; trigger a refresh to load data.
+            {% endif %}
+        </p>
+    </div>
+    <button id="refresh-btn" class="btn">Refresh Data</button>
+</div>
+
+{% if stocks %}
+<table id="stocks-table" class="display">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Ticker</th>
+            <th>Company</th>
+            <th>Sector</th>
+            <th>Rating</th>
+            <th>Score</th>
+            <th>Analysts</th>
+            <th>Price</th>
+            <th>Target</th>
+            <th>Upside</th>
+            <th>Market Cap</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in stocks %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="/stock/{{ s.ticker }}">{{ s.ticker }}</a></td>
+            <td>{{ s.company_name or 'N/A' }}</td>
+            <td>{{ s.sector or 'N/A' }}</td>
+            <td>
+                <span class="badge badge-{{ s.rec_key or 'none' }}">
+                    {{ (s.rec_key or 'N/A') | replace('_', ' ') | title }}
+                </span>
+            </td>
+            <td>{{ '%.2f' | format(s.rec_mean) if s.rec_mean else 'N/A' }}</td>
+            <td>{{ s.num_analysts or 'N/A' }}</td>
+            <td>{{ '$%.2f' | format(s.current_price) if s.current_price else 'N/A' }}</td>
+            <td>{{ '$%.2f' | format(s.target_mean) if s.target_mean else 'N/A' }}</td>
+            <td>
+                {% if s.upside_pct is not none %}
+                    <span class="{% if s.upside_pct > 0 %}text-green{% elif s.upside_pct < 0 %}text-red{% endif %}">
+                        {{ '%+.1f' | format(s.upside_pct) }}%
+                    </span>
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+            <td>
+                {% if s.market_cap %}
+                    {% if s.market_cap >= 1e12 %}
+                        ${{ '%.1f' | format(s.market_cap / 1e12) }}T
+                    {% elif s.market_cap >= 1e9 %}
+                        ${{ '%.1f' | format(s.market_cap / 1e9) }}B
+                    {% elif s.market_cap >= 1e6 %}
+                        ${{ '%.0f' | format(s.market_cap / 1e6) }}M
+                    {% else %}
+                        ${{ '%.0f' | format(s.market_cap) }}
+                    {% endif %}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">
+    <h2>No data available</h2>
+    <p>Click "Refresh Data" to start fetching analyst recommendations for all S&P 500 stocks.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
