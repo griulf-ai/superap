@@ -35,16 +35,60 @@ Du trenger **Python 3.10 eller nyere**. Hvis du ikke har Python:
 
 ### 2. Last ned prosjektet
 
+Du trenger koden på din egen maskin. Det finnes to måter å gjøre dette på:
+
+#### Alternativ A: Med git (anbefalt)
+
+Hvis du har git installert, åpne en terminal og kjør:
+
 ```bash
 git clone https://github.com/griulf-ai/superap.git
-cd superap
 ```
 
-Eller hvis du allerede har mappen, bare naviger til den:
+Dette lager en ny mappe kalt `superap/` der du kjørte kommandoen. Gå inn i mappen:
 
 ```bash
 cd superap
 ```
+
+> Har du ikke git? Installer det:
+> - **Mac**: `brew install git` eller last ned fra [git-scm.com](https://git-scm.com)
+> - **Windows**: Last ned fra [git-scm.com](https://git-scm.com) — velg "Git Bash" under installasjonen
+> - **Linux**: `sudo apt install git`
+
+#### Alternativ B: Last ned som ZIP (uten git)
+
+1. Gå til **https://github.com/griulf-ai/superap** i nettleseren
+2. Klikk den grønne **"Code"**-knappen
+3. Velg **"Download ZIP"**
+4. Pakk ut ZIP-filen der du vil ha prosjektet (f.eks. Skrivebordet eller hjemmemappen)
+5. Åpne en terminal og naviger til mappen:
+
+```bash
+# Eksempel hvis du pakket ut på Skrivebordet (Mac/Linux):
+cd ~/Desktop/superap-main
+
+# Eksempel på Windows (PowerShell):
+cd ~\Desktop\superap-main
+```
+
+> Merk: Når du laster ned som ZIP heter mappen gjerne `superap-main` i stedet for `superap`.
+
+#### Sjekk at du er i riktig mappe
+
+Uansett hvilken metode du brukte, sjekk at du ser prosjektfilene:
+
+```bash
+ls
+```
+
+Du skal se noe som dette:
+
+```
+CLAUDE.md  README.md  app.py  config.py  requirements.txt  src/  static/  templates/  tests/
+```
+
+Hvis du ser disse filene er du klar for neste steg.
 
 ### 3. Opprett et virtuelt miljø
 
