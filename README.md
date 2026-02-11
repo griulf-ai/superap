@@ -207,6 +207,13 @@ python app.py
 **"python3: command not found"**
 → Python er ikke installert eller ikke i PATH. Se steg 1.
 
+**Windows: "running scripts is disabled on this system"**
+→ PowerShell blokkerer skript som standard. Kjør dette én gang for å fikse det:
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+Skriv `Y` når den spør om du er sikker. Prøv deretter `.venv\Scripts\Activate.ps1` på nytt.
+
 **"No module named flask" eller lignende**
 → Du har glemt å aktivere det virtuelle miljøet. Kjør `source .venv/bin/activate` først.
 
