@@ -17,11 +17,25 @@ En web-app som henter analytikeranbefalinger fra Yahoo Finance for alle S&P 500-
 
 ---
 
+## Før du begynner: Hva er en terminal?
+
+Hele denne guiden bruker en **terminal** (også kalt kommandolinje). Det er et vindu der du skriver tekstkommandoer i stedet for å klikke med musen.
+
+**Slik åpner du en terminal:**
+
+- **Mac**: Trykk `Cmd + Mellomrom`, skriv `Terminal`, og trykk Enter
+- **Windows**: Trykk `Windows-tasten`, skriv `PowerShell`, og trykk Enter
+- **Linux**: Trykk `Ctrl + Alt + T`
+
+Du får opp et vindu med en blinkende markør — det er der du skriver kommandoene fra denne guiden.
+
+---
+
 ## Installasjon steg for steg
 
 ### 1. Sjekk at du har Python installert
 
-Åpne en terminal og skriv:
+Åpne en terminal (se over) og skriv:
 
 ```bash
 python3 --version
