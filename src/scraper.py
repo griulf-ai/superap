@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+import urllib.request
 
 import pandas as pd
 import yfinance as yf
@@ -13,6 +14,11 @@ from config import (
     SP500_WIKIPEDIA_URL,
 )
 from src.db import upsert_stock
+
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +34,10 @@ refresh_status = {
 
 def get_sp500_tickers() -> list[dict]:
     """Fetch current S&P 500 constituents from Wikipedia."""
-    tables = pd.read_html(SP500_WIKIPEDIA_URL)
+    req = urllib.request.Request(SP500_WIKIPEDIA_URL, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(req) as resp:
+        html = resp.read()
+    tables = pd.read_html(html)
     df = tables[0]
     # Wikipedia uses '.' but yfinance uses '-' (e.g., BRK.B -> BRK-B)
     df["Symbol"] = df["Symbol"].str.replace(".", "-", regex=False)
