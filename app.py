@@ -69,9 +69,15 @@ def create_app():
     # Avoid duplicate scheduler when Flask reloader forks the process
     if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         init_scheduler()
+        # Auto-refresh on startup if the database is empty
+        if get_stock_count() == 0 and not refresh_status["in_progress"]:
+            logging.getLogger(__name__).info("Database is empty, starting initial data refresh...")
+            thread = threading.Thread(target=refresh_all_stocks, daemon=True)
+            thread.start()
     return app
 
 
 if __name__ == "__main__":
     create_app()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
