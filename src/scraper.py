@@ -29,6 +29,7 @@ refresh_status = {
     "total": 0,
     "success": 0,
     "failed": 0,
+    "error": None,
 }
 
 
@@ -117,21 +118,26 @@ def refresh_all_stocks():
     """Fetch data for all S&P 500 stocks and store in the database."""
     logger.info("Starting S&P 500 data refresh...")
 
+    refresh_status["in_progress"] = True
+    refresh_status["processed"] = 0
+    refresh_status["total"] = 0
+    refresh_status["success"] = 0
+    refresh_status["failed"] = 0
+    refresh_status["error"] = None
+
     try:
         tickers = get_sp500_tickers()
     except Exception as e:
         logger.error(f"Failed to fetch S&P 500 ticker list: {e}")
+        refresh_status["in_progress"] = False
+        refresh_status["error"] = f"Failed to fetch ticker list: {e}"
         return
 
     total = len(tickers)
     success = 0
     failed = 0
 
-    refresh_status["in_progress"] = True
-    refresh_status["processed"] = 0
     refresh_status["total"] = total
-    refresh_status["success"] = 0
-    refresh_status["failed"] = 0
 
     for i, row in enumerate(tickers):
         symbol = row["Symbol"]
